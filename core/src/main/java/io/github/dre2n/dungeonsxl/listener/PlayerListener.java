@@ -355,8 +355,8 @@ public class PlayerListener implements Listener {
             new RespawnTask(player, respawn).runTaskLater(plugin, 10);
 
             // Don't forget Doge!
-            if (gamePlayer.getWolf() != null) {
-                gamePlayer.getWolf().teleport(respawn);
+            if (gamePlayer.getServant() != null) {
+                gamePlayer.getServant().teleport(respawn);
             }
         }
     }

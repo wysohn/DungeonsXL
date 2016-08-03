@@ -189,11 +189,10 @@ public class EntityListener implements Listener {
                 }
             }
 
-            // Check Dogs
             if (attackerEntity instanceof Player || attackedEntity instanceof Player) {
                 for (DGamePlayer dPlayer : DGamePlayer.getByWorld(gameWorld.getWorld())) {
-                    if (dPlayer.getWolf() != null) {
-                        if (attackerEntity == dPlayer.getWolf() || attackedEntity == dPlayer.getWolf()) {
+                    if (dPlayer.getServant() != null) {
+                        if (attackerEntity == dPlayer.getServant() || attackedEntity == dPlayer.getServant()) {
                             event.setCancelled(true);
                             return;
                         }
@@ -202,14 +201,14 @@ public class EntityListener implements Listener {
             }
 
             for (DGamePlayer dPlayer : DGamePlayer.getByWorld(gameWorld.getWorld())) {
-                if (dPlayer.getWolf() != null) {
+                if (dPlayer.getServant() != null) {
                     if (attackerEntity instanceof Player || attackedEntity instanceof Player) {
-                        if (attackerEntity == dPlayer.getWolf() || attackedEntity == dPlayer.getWolf()) {
+                        if (attackerEntity == dPlayer.getServant() || attackedEntity == dPlayer.getServant()) {
                             event.setCancelled(true);
                             return;
                         }
 
-                    } else if (attackerEntity == dPlayer.getWolf() || attackedEntity == dPlayer.getWolf()) {
+                    } else if (attackerEntity == dPlayer.getServant() || attackedEntity == dPlayer.getServant()) {
                         event.setCancelled(false);
                         return;
                     }

@@ -98,16 +98,22 @@ public class DClass {
     }
 
     /**
+     * @deprecated
+     * Use the servant system instead
      * @return if the class has a dog
      */
+    @Deprecated
     public boolean hasDog() {
         return dog;
     }
 
     /**
+     * @deprecated
+     * Use the servant system instead
      * @param dog
      * set if the class has a dog
      */
+    @Deprecated
     public void setDog(boolean dog) {
         this.dog = dog;
     }

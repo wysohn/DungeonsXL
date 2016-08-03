@@ -52,7 +52,9 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Wolf;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
@@ -73,8 +75,8 @@ public class DGamePlayer extends DInstancePlayer {
 
     private DClass dClass;
     private Location checkpoint;
-    private Wolf wolf;
-    private int wolfRespawnTime = 30;
+    private LivingEntity servant;
+    private int servantRespawnTime = 30;
     private long offlineTime;
 
     private int initialLives = -1;
@@ -245,19 +247,18 @@ public class DGamePlayer extends DInstancePlayer {
             if (this.dClass != dClass) {
                 this.dClass = dClass;
 
-                /* Set Dog */
-                if (wolf != null) {
-                    wolf.remove();
-                    wolf = null;
+                if (servant != null) {
+                    servant.remove();
+                    servant = null;
                 }
 
                 if (dClass.hasDog()) {
-                    wolf = (Wolf) getWorld().spawnEntity(getPlayer().getLocation(), EntityType.WOLF);
-                    wolf.setTamed(true);
-                    wolf.setOwner(getPlayer());
+                    servant = (Wolf) getWorld().spawnEntity(getPlayer().getLocation(), EntityType.WOLF);
+                    ((Tameable) servant).setTamed(true);
+                    ((Tameable) servant).setOwner(getPlayer());
 
-                    double maxHealth = ((Damageable) wolf).getMaxHealth();
-                    wolf.setHealth(maxHealth);
+                    double maxHealth = servant.getMaxHealth();
+                    servant.setHealth(maxHealth);
                 }
 
                 /* Delete Inventory */
@@ -318,33 +319,33 @@ public class DGamePlayer extends DInstancePlayer {
     }
 
     /**
-     * @return the wolf
+     * @return the servant
      */
-    public Wolf getWolf() {
-        return wolf;
+    public LivingEntity getServant() {
+        return servant;
     }
 
     /**
-     * @param wolf
-     * the wolf to set
+     * @param servant
+     * the servant to set
      */
-    public void setWolf(Wolf wolf) {
-        this.wolf = wolf;
+    public void setServant(LivingEntity servant) {
+        this.servant = servant;
     }
 
     /**
-     * @return the wolfRespawnTime
+     * @return the servantRespawnTime
      */
-    public int getWolfRespawnTime() {
-        return wolfRespawnTime;
+    public int getServantRespawnTime() {
+        return servantRespawnTime;
     }
 
     /**
-     * @param wolfRespawnTime
-     * the wolfRespawnTime to set
+     * @param servantRespawnTime
+     * the servantRespawnTime to set
      */
-    public void setWolfRespawnTime(int wolfRespawnTime) {
-        this.wolfRespawnTime = wolfRespawnTime;
+    public void setServantRespawnTime(int servantRespawnTime) {
+        this.servantRespawnTime = servantRespawnTime;
     }
 
     /**
@@ -714,8 +715,8 @@ public class DGamePlayer extends DInstancePlayer {
         PlayerUtil.secureTeleport(getPlayer(), respawn);
 
         // Don't forget Doge!
-        if (wolf != null) {
-            wolf.teleport(getPlayer());
+        if (servant != null) {
+            servant.teleport(getPlayer());
         }
 
         // Respawn Items
@@ -804,8 +805,8 @@ public class DGamePlayer extends DInstancePlayer {
             DGamePlayer dPlayer = getByPlayer(player);
             dPlayer.setWorld(gameWorld.getWorld());
             dPlayer.setCheckpoint(dGroup.getGameWorld().getStartLocation(dGroup));
-            if (dPlayer.getWolf() != null) {
-                dPlayer.getWolf().teleport(dPlayer.getCheckpoint());
+            if (dPlayer.getServant() != null) {
+                dPlayer.getServant().teleport(dPlayer.getCheckpoint());
             }
         }
         dGroup.startGame(game);
@@ -971,7 +972,7 @@ public class DGamePlayer extends DInstancePlayer {
     public void update(boolean updateSecond) {
         boolean locationValid = true;
         Location teleportLocation = player.getLocation();
-        boolean teleportWolf = false;
+        boolean teleportServant = false;
         boolean respawnInventory = false;
         boolean offline = false;
         boolean kick = false;
@@ -991,8 +992,8 @@ public class DGamePlayer extends DInstancePlayer {
                     }
 
                     // Don't forget Doge!
-                    if (getWolf() != null) {
-                        teleportWolf = true;
+                    if (servant != null) {
+                        teleportServant = true;
                     }
 
                     // Respawn Items
@@ -1003,19 +1004,19 @@ public class DGamePlayer extends DInstancePlayer {
             }
 
         } else if (gameWorld != null) {
-            // Update Wolf
-            if (getWolf() != null) {
-                if (getWolf().isDead()) {
-                    if (getWolfRespawnTime() <= 0) {
-                        setWolf((Wolf) getWorld().spawnEntity(getPlayer().getLocation(), EntityType.WOLF));
-                        getWolf().setTamed(true);
-                        getWolf().setOwner(getPlayer());
-                        setWolfRespawnTime(30);
+            // Update servant
+            if (servant != null) {
+                if (servant.isDead()) {
+                    if (servantRespawnTime <= 0) {
+                        servant = (Wolf) getWorld().spawnEntity(getPlayer().getLocation(), EntityType.WOLF);
+                        ((Tameable) servant).setTamed(true);
+                        ((Tameable) servant).setOwner(getPlayer());
+                        servantRespawnTime = 30;
                     }
-                    wolfRespawnTime--;
+                    servantRespawnTime--;
                 }
 
-                DMob dMob = DMob.getByEntity(getWolf());
+                DMob dMob = DMob.getByEntity(servant);
                 if (dMob != null) {
                     gameWorld.removeDMob(dMob);
                 }
@@ -1033,7 +1034,7 @@ public class DGamePlayer extends DInstancePlayer {
             triggerAllInDistance = true;
         }
 
-        DInstancePlayerUpdateEvent event = new DInstancePlayerUpdateEvent(this, locationValid, teleportWolf, respawnInventory, offline, kick, triggerAllInDistance);
+        DInstancePlayerUpdateEvent event = new DInstancePlayerUpdateEvent(this, locationValid, teleportServant, respawnInventory, offline, kick, triggerAllInDistance);
         plugin.getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
@@ -1044,8 +1045,8 @@ public class DGamePlayer extends DInstancePlayer {
             PlayerUtil.secureTeleport(getPlayer(), teleportLocation);
         }
 
-        if (teleportWolf) {
-            getWolf().teleport(teleportLocation);
+        if (teleportServant) {
+            servant.teleport(teleportLocation);
         }
 
         if (respawnInventory) {

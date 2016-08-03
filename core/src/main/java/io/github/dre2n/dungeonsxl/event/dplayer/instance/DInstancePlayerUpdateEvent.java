@@ -30,16 +30,16 @@ public class DInstancePlayerUpdateEvent extends DPlayerEvent implements Cancella
     private boolean cancelled;
 
     private boolean locationValid;
-    private boolean teleportWolf;
+    private boolean teleportServant;
     private boolean respawnInventory;
     private boolean offline;
     private boolean kick;
     private boolean triggerAllInDistance;
 
-    public DInstancePlayerUpdateEvent(DInstancePlayer dPlayer, boolean locationValid, boolean teleportWolf, boolean respawnInventory, boolean offline, boolean kick, boolean triggerAllInDistance) {
+    public DInstancePlayerUpdateEvent(DInstancePlayer dPlayer, boolean locationValid, boolean teleportServant, boolean respawnInventory, boolean offline, boolean kick, boolean triggerAllInDistance) {
         super(dPlayer);
         this.locationValid = locationValid;
-        this.teleportWolf = teleportWolf;
+        this.teleportServant = teleportServant;
         this.respawnInventory = respawnInventory;
         this.offline = offline;
         this.kick = kick;
@@ -62,18 +62,18 @@ public class DInstancePlayerUpdateEvent extends DPlayerEvent implements Cancella
     }
 
     /**
-     * @return if the player's wolf gets teleported
+     * @return if the player's servant gets teleported
      */
-    public boolean isTeleportWolf() {
-        return teleportWolf;
+    public boolean doTeleportServant() {
+        return teleportServant;
     }
 
     /**
-     * @param teleportWolf
-     * set if the wolf gets teleported
+     * @param teleportServant
+     * set if the servant gets teleported
      */
-    public void setTeleportWolf(boolean teleportWolf) {
-        this.teleportWolf = teleportWolf;
+    public void setTeleportServant(boolean teleportServant) {
+        this.teleportServant = teleportServant;
     }
 
     /**
