@@ -46,7 +46,7 @@ import org.bukkit.scheduler.BukkitTask;
 /**
  * Represents a group of players.
  *
- * @author Frank Baumann, Daniel Saukel
+ * @author Frank Baumann, Daniel Saukel, Wooyoung Son
  */
 public class DGroup {
 
@@ -660,7 +660,14 @@ public class DGroup {
         game.fetchRules();
         GameRules rules = game.getRules();
 
-        color = plugin.getMainConfig().getGroupColorPriority().get(game.getDGroups().indexOf(this));
+        int groupColorIndex = game.getDGroups().indexOf(this);
+        int colorSize = plugin.getMainConfig().getGroupColorPriority().size();
+        //GroupColorPriority can possibly be empty depends on the config
+        if(colorSize != 0 && groupColorIndex < colorSize){
+        	color = plugin.getMainConfig().getGroupColorPriority().get(groupColorIndex);
+        }else{
+        	//TODO: default color?
+        }
 
         for (DGroup dGroup : game.getDGroups()) {
             if (dGroup == null) {
